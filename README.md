@@ -1,5 +1,7 @@
-# Weblogic issue - The cost of WeldBootstrap in weblogic is more than 2/3 the responsability
-of the Jersey Http server.
+# In WLS - Jersey Http - is during the WELD#deployBeans() phase - a costly observer of the process annotated types event
+
+Jersey seems to be the main culprit for the  2/3 of the WelldBostrap phase time due to its isJaxRsComponentType - jersey code should be tuned to reduce its footprint
+
 
 PROBLEM 1:
 
@@ -84,6 +86,11 @@ at com.oracle.injection.integration.CDIAppDeploymentExtension.activate(CDIAppDep
 ```
 		
 PROBLEM 2
-Weblogic when scanning for CDI bean classes at the start of WeldBootstrap is doing so in a single threaded approach.
-It should use multi threaded Class scanning for this.
-The workd around for this is to start weblogic with: -Dorg.jboss.weld.bootstrap.concurrentDeployment=true
+In WLS, by default, the CDI Bean class scanning that takes place as the first step of WeldBoostrap is happening in a single-threaded approach. However, weld supports a multi-threaded class scanning approach that should be preferred. 
+
+Work-around:
+-Dorg.jboss.weld.bootstrap.concurrentDeployment=true
+
+This system property will override the default behavior and tell Weld that it should the multi-threaded ConcurrentDeployer approach.
+On expensinve Weld initilizations (e.g. 6 seconds of class aquisition time, this tunning can reduce the WeldBoostrap time by 2 seconds).
+On this sample applicaiton, the class scanning is barely felt. The only hase tracked when sampling the application eveyr second is the deployBeans() phase because of the weld observer however.
