@@ -85,6 +85,15 @@ at com.oracle.injection.integration.CDIAppDeploymentExtension.initCdi(CDIAppDepl
 at com.oracle.injection.integration.CDIAppDeploymentExtension.activate(CDIAppDeploymentExtension.java:43)
 ```
 		
+
+Concerning this issue, JERSEY project has been made aware of the problem.
+Issue opened under:
+https://github.com/jersey/jersey/issues/3703
+
+
+
+		
+		
 PROBLEM 2
 In WLS, by default, the CDI Bean class scanning that takes place as the first step of WeldBoostrap is happening in a single-threaded approach. However, weld supports a multi-threaded class scanning approach that should be preferred. 
 
